@@ -1,11 +1,14 @@
 import java.math.BigInteger;
+import java.math.*;
 
 public class Searcher implements Runnable{
 
 	public BigInteger num;
+	Tracker T;
 	
 	public Searcher(int a) {
 		num = toBig(a);
+		
 	}
 	
 	public static BigInteger toBig(int n) {
@@ -65,6 +68,8 @@ public class Searcher implements Runnable{
 		if(fermat_test(num)) {
 			if(deterministic_test(num)) {
 				//get a message back saying its prime
+				int primeNum = num.intValue();
+				Tracker.setPrimeNum(primeNum);
 			}
 		}
 		//get a message back saying its not prime
