@@ -1,4 +1,3 @@
-
 public class Tracker {
 
 	static int nprime;
@@ -12,6 +11,14 @@ public class Tracker {
 	
 	public synchronized void incrementNum() {
 		nprime++;
+	}
+
+	public static int getPrimeNum() {
+		return primeNum;
+	}
+
+	public static void setPrimeNum(int primeNum) {
+		Tracker.primeNum = primeNum;
 	}
 	
 }
