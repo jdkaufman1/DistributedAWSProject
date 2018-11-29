@@ -3,6 +3,7 @@ import java.math.*;
 
 public class Searcher implements Runnable{
 
+	static int totalPrime;
 	public BigInteger num;
 	Tracker T;
 	
@@ -69,7 +70,14 @@ public class Searcher implements Runnable{
 			if(deterministic_test(num)) {
 				//get a message back saying its prime
 				int primeNum = num.intValue();
+				
+				
 				Tracker.setPrimeNum(primeNum);
+				
+				System.out.println("/////////");
+				System.out.println("is prime");
+				System.out.println("/////////");
+				
 			}
 		}
 		//get a message back saying its not prime
