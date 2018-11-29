@@ -5,11 +5,11 @@ public class Searcher implements Runnable{
 
 	static int totalPrime;
 	public BigInteger num;
-	Tracker T;
 	
-	public Searcher(int a) {
-		num = toBig(a);
-		
+	public Searcher(int a, Tracker T) throws InterruptedException {
+			
+			num = toBig(a);
+			T.incrementNum();
 	}
 	
 	public static BigInteger toBig(int n) {
