@@ -1,31 +1,44 @@
 
+/**
+ * A class that serves as a sort of monitor and barrier while keeping track of 
+ * what number prime we're on.
+ *
+ */
 public class Tracker {
 
+	//These variables keep track of what prime we have and what number prime it is
 	private static int nprime = 1;
 	private static int primeNum = 2;
-	private static int threadsRunning;
+	
+	//This keeps track of what our maximum # of threads is.
 	private static int maxThreads;
+	
+	//Keeps track of what number prime we're looking for so we know when we're done
 	private final int lookingFor;
-	private static boolean locked = false;
+
+	//Used in the barrier
 	private static int numWaiting;
 	private static boolean broken;
 	
+	//Constructor for our Tracker - initializes it based on what number we're looking for
 	public Tracker(int num, int whatPrime) {
 		lookingFor = whatPrime;
 		maxThreads = num;
-		threadsRunning = 0;
+		//threadsRunning = 0;
 		numWaiting = 0;
 		broken = false;
 	}
 	
+	/**
+	 * Standard barrier await method
+	 */
 	public synchronized void await() {
 
 		numWaiting++;
-		//System.out.println(numWaiting + " waiting.");
 		if(numWaiting == maxThreads) {
 			broken = true;
-			//System.out.println("Broken");
 			numWaiting = 0;
+			//Not sure why but this makes it work but not having that there kills it
 			broken = false;
 			notifyAll();
 			return;
@@ -43,53 +56,57 @@ public class Tracker {
 		
 	}
 	
+	/**
+	 * Used to force the tracker to replace primeNum even if the number is smaller
+	 * @param n
+	 */
+	public synchronized void forceReplace(int n) {
+		primeNum = n;
+	}
+	
+	/**
+	 * 
+	 * @return whether the tracker is done or not
+	 */
 	public synchronized boolean isDone() {
 		return nprime >= lookingFor; 
 	}
 	
-	public synchronized int getThreadsRunning() {
-		if(locked) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return threadsRunning;
-	}
-	
+	/**
+	 * See if we should replace the current prime that we are holding.  This is
+	 * necessary to check because we don't know the order that the threads are going
+	 * to return their primes in - its possible that when starting out, 3 could be the
+	 * fifth prime to be reported back even though its the second prime.  By always
+	 * incrementing what number prime we're on but potentially not replacing the 
+	 * prime, we make sure that if things are out of order they eventually get fixed.
+	 * @param n
+	 */
 	public synchronized void checkReplace(int n) {
-		if(locked) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		
 		if(n>primeNum) {
 			primeNum= n;
 		}
-		//System.out.println(primeNum + " is prime and is the " + nprime + "'th prime!");
 	}
 	
+	/**
+	 * Increment which number prime we're on
+	 */
 	public synchronized void incrementNum() {
-		if(locked) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 		nprime++;
 	}
 	
+	/**
+	 * Return which number prime we're on
+	 * @return nprime
+	 */
 	public int whatNumber() {
 		return nprime;
 	}
 	
+	/**
+	 * Return what the actual prime number is
+	 * @return the actual prime.
+	 */
 	public int getPrime() {
 		return primeNum;
 	}
